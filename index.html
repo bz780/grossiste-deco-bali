@@ -44,10 +44,10 @@
     "@type": "OfferCatalog",
     "name": "Catalogue décoration Bali en gros",
     "itemListElement": [
-      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Mobilier teck Bali en gros", "description": "Tables, chaises, buffets en teck massif recyclé — artisanat balinais authentique, dès 3 pièces", "offers": {"@type": "Offer", "price": "89.00", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}},
-      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Statues Bouddha bois grossiste", "description": "Statues Bouddha sculptées main en bois de suar, teck ou résine artisanale, dès 0,89€", "offers": {"@type": "Offer", "price": "0.89", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}},
-      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Luminaires rotin suspensions Bali", "description": "Suspensions et abat-jours en rotin naturel tressé main — 30 modèles, prix grossiste dès 14€", "offers": {"@type": "Offer", "price": "14.00", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}},
-      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Textiles batik sarongs grossiste", "description": "Sarongs, nappes, housses coussins en batik et tissu traditionnel balinais, lot dès 20 pièces", "offers": {"@type": "Offer", "price": "3.90", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}}
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Mobilier teck Bali en gros", "description": "Tables, chaises, buffets en teck massif recyclé — artisanat balinais authentique, dès 3 pièces", "image": "https://grossiste-deco-bali.fr/images/hero.jpg", "offers": {"@type": "Offer", "price": "89.00", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Statues Bouddha bois grossiste", "description": "Statues Bouddha sculptées main en bois de suar, teck ou résine artisanale, dès 0,89€", "image": "https://grossiste-deco-bali.fr/images/hero.jpg", "offers": {"@type": "Offer", "price": "0.89", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Luminaires rotin suspensions Bali", "description": "Suspensions et abat-jours en rotin naturel tressé main — 30 modèles, prix grossiste dès 14€", "image": "https://grossiste-deco-bali.fr/images/hero.jpg", "offers": {"@type": "Offer", "price": "14.00", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}},
+      {"@type": "Offer", "itemOffered": {"@type": "Product", "name": "Textiles batik sarongs grossiste", "description": "Sarongs, nappes, housses coussins en batik et tissu traditionnel balinais, lot dès 20 pièces", "image": "https://grossiste-deco-bali.fr/images/hero.jpg", "offers": {"@type": "Offer", "price": "3.90", "priceCurrency": "EUR", "priceValidUntil": "2027-12-31", "availability": "https://schema.org/InStock", "url": "https://grossiste-deco-bali.fr/#contact"}}}
     ]
   },
   "aggregateRating": {
@@ -981,7 +981,11 @@ footer a:hover { color: rgba(255,255,255,.85); }
     <h2 class="section-title">Demander un devis grossiste Bali</h2>
     <p class="section-desc">Réponse sous 4h ouvrées · Catalogue PDF sur demande · Echantillons disponibles</p>
     <div class="contact-grid">
-      <form class="contact-form" onsubmit="return false;">
+      <form class="contact-form" id="contact-form">
+        <input type="hidden" name="_subject" value="Demande de devis — grossiste deco bali">
+        <input type="hidden" name="_honeypot" value="">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_template" value="table">
         <div class="form-row">
           <div class="form-group">
             <label>Prénom &amp; Nom</label>
@@ -1035,6 +1039,12 @@ footer a:hover { color: rgba(255,255,255,.85); }
         </div>
         <button type="submit" class="form-submit">Envoyer ma demande →</button>
       </form>
+      <div id="form-success" style="display:none;padding:18px 20px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;color:#166534;margin-top:16px;font-weight:500;font-size:.95rem;">
+        ✓ Votre demande a bien été envoyée. Nous vous répondrons sous 24h ouvrées.
+      </div>
+      <div id="form-error" style="display:none;padding:18px 20px;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;color:#991b1b;margin-top:16px;font-size:.95rem;">
+        ✗ Une erreur est survenue. Veuillez réessayer ou nous contacter directement par email.
+      </div>
       <div class="contact-info">
         <div>
           <div class="contact-info-title">Contactez-nous directement</div>
@@ -1087,5 +1097,53 @@ function toggleFaq(btn) {
 }
 </script>
 <!--/email_off-->
+
+<script>
+/* Formsubmit AJAX handler — auto-generated */
+(function () {
+  const form = document.querySelector('.contact-form');
+  if (!form) return;
+
+  // Bloquer la soumission native (honeypot + AJAX)
+  form.setAttribute('novalidate', '');
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    // Validation HTML5 manuelle
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    const btn = form.querySelector('[type="submit"]');
+    const origText = btn.textContent;
+    btn.textContent = 'Envoi en cours…';
+    btn.disabled = true;
+
+    const successEl = document.getElementById('form-success');
+    const errorEl   = document.getElementById('form-error');
+    if (errorEl) errorEl.style.display = 'none';
+
+    try {
+      const data = new FormData(form);
+      const res = await fetch('https://formsubmit.co/ajax/contact@le-reve-de-noel.com', {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: data,
+      });
+      const json = await res.json();
+      if (json.success === 'true' || json.success === true) {
+        form.reset();
+        form.style.display = 'none';
+        if (successEl) successEl.style.display = 'block';
+      } else {
+        throw new Error('Formsubmit non-success');
+      }
+    } catch (err) {
+      btn.textContent = origText;
+      btn.disabled = false;
+      if (errorEl) errorEl.style.display = 'block';
+    }
+  });
+})();
+</script>
 </body>
 </html>
