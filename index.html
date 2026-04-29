@@ -362,6 +362,7 @@ footer a:hover { color: rgba(255,255,255,.85); }
 </style>
 <link rel="preload" as="image" href="/images/hero.jpg" fetchpriority="high">
 <!--email_off-->
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </head>
 <body>
 
@@ -981,7 +982,13 @@ footer a:hover { color: rgba(255,255,255,.85); }
     <h2 class="section-title">Demander un devis grossiste Bali</h2>
     <p class="section-desc">Réponse sous 4h ouvrées · Catalogue PDF sur demande · Echantillons disponibles</p>
     <div class="contact-grid">
-      <form class="contact-form" id="contact-form">
+      <form class="contact-form" id="contact-form" novalidate>
+<input type="hidden" name="_subject" value="Demande devis — grossiste déco Bali">
+<input type="hidden" name="_honeypot" value="">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_template" value="table">
+<input type="text" name="_gotcha" style="display:none !important;position:absolute;left:-9999px" tabindex="-1" autocomplete="off" aria-hidden="true">
+<input type="hidden" name="_form_started_at" value="">
         <input type="hidden" name="_subject" value="Demande de devis — grossiste deco bali">
         <input type="hidden" name="_honeypot" value="">
         <input type="hidden" name="_captcha" value="false">
@@ -989,26 +996,26 @@ footer a:hover { color: rgba(255,255,255,.85); }
         <div class="form-row">
           <div class="form-group">
             <label>Prénom &amp; Nom</label>
-            <input type="text" placeholder="Marie Dupont">
+            <input type="text" placeholder="Marie Dupont" name="nom">
           </div>
           <div class="form-group">
             <label>Société</label>
-            <input type="text" placeholder="Ma Boutique Déco">
+            <input type="text" placeholder="Ma Boutique Déco" name="societe">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label>Email professionnel</label>
-            <input type="email" placeholder="contact@maboutique.fr">
+            <input type="email" placeholder="contact@maboutique.fr" name="email">
           </div>
           <div class="form-group">
             <label>Téléphone</label>
-            <input type="tel" placeholder="06 XX XX XX XX">
+            <input type="tel" placeholder="06 XX XX XX XX" name="tel">
           </div>
         </div>
         <div class="form-group">
           <label>Type d'activité</label>
-          <select>
+          <select name="type">
             <option value="">Sélectionner...</option>
             <option>Boutique décoration</option>
             <option>Concept store</option>
@@ -1022,7 +1029,7 @@ footer a:hover { color: rgba(255,255,255,.85); }
         </div>
         <div class="form-group">
           <label>Gammes qui m'intéressent</label>
-          <select>
+          <select name="type">
             <option value="">Sélectionner...</option>
             <option>Mobilier (teck, rotin, suar)</option>
             <option>Statues &amp; Art balinais</option>
@@ -1035,9 +1042,11 @@ footer a:hover { color: rgba(255,255,255,.85); }
         </div>
         <div class="form-group">
           <label>Votre message (volume estimé, produits recherchés)</label>
-          <textarea placeholder="Ex : Je cherche 50 suspensions rotin et 30 statues Bouddha pour ouvrir ma boutique en juin..."></textarea>
+          <textarea placeholder="Ex : Je cherche 50 suspensions rotin et 30 statues Bouddha pour ouvrir ma boutique en juin..." name="message"></textarea>
         </div>
-        <button type="submit" class="form-submit">Envoyer ma demande →</button>
+        
+<div class="cf-turnstile" data-sitekey="0x4AAAAAADFQDxo7YCVsY9Ds" data-theme="light" data-size="flexible" style="margin:14px 0"></div>
+<button type="submit" class="form-submit">Envoyer ma demande →</button>
       </form>
       <div id="form-success" style="display:none;padding:18px 20px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;color:#166534;margin-top:16px;font-weight:500;font-size:.95rem;">
         ✓ Votre demande a bien été envoyée. Nous vous répondrons sous 24h ouvrées.
@@ -1099,18 +1108,42 @@ function toggleFaq(btn) {
 <!--/email_off-->
 
 <script>
-/* Formsubmit AJAX handler — auto-generated */
+/* Formsubmit AJAX handler — v2 (turnstile+timing) */
 (function () {
   const form = document.querySelector('.contact-form');
   if (!form) return;
-
-  // Bloquer la soumission native (honeypot + AJAX)
   form.setAttribute('novalidate', '');
+
+  const formStartTime = Date.now();
+  const tsField = form.querySelector('input[name="_form_started_at"]');
+  if (tsField) tsField.value = String(formStartTime);
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
 
-    // Validation HTML5 manuelle
+    // Anti-bot : timing
+    if (Date.now() - formStartTime < 2000) {
+      // bot probable, ignorer silencieusement
+      return;
+    }
+
+    // Anti-bot : honeypot _gotcha
+    const gotcha = form.querySelector('input[name="_gotcha"]');
+    if (gotcha && gotcha.value) return;
+
+    // Anti-bot : Turnstile token
+    const tsResp = form.querySelector('[name="cf-turnstile-response"]');
+    if (!tsResp || !tsResp.value) {
+      const errorEl = document.getElementById('form-error');
+      if (errorEl) {
+        errorEl.textContent = '✗ Veuillez compléter la vérification anti-robot avant d\'envoyer.';
+        errorEl.style.display = 'block';
+      } else {
+        alert('Veuillez compléter la vérification anti-robot.');
+      }
+      return;
+    }
+
     if (!form.checkValidity()) { form.reportValidity(); return; }
 
     const btn = form.querySelector('[type="submit"]');
@@ -1144,7 +1177,6 @@ function toggleFaq(btn) {
       if (errorEl) errorEl.style.display = 'block';
     }
   });
-})();
-</script>
+})();</script>
 </body>
 </html>
