@@ -362,7 +362,6 @@ footer a:hover { color: rgba(255,255,255,.85); }
 </style>
 <link rel="preload" as="image" href="/images/hero.jpg" fetchpriority="high">
 <!--email_off-->
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
 </head>
 <body>
 
@@ -1044,8 +1043,6 @@ footer a:hover { color: rgba(255,255,255,.85); }
           <label>Votre message (volume estimé, produits recherchés)</label>
           <textarea placeholder="Ex : Je cherche 50 suspensions rotin et 30 statues Bouddha pour ouvrir ma boutique en juin..." name="message"></textarea>
         </div>
-        
-<div class="cf-turnstile" data-sitekey="0x4AAAAAADFQDxo7YCVsY9Ds" data-theme="light" data-size="flexible" style="margin:14px 0"></div>
 <button type="submit" class="form-submit">Envoyer ma demande →</button>
       </form>
       <div id="form-success" style="display:none;padding:18px 20px;background:#f0fdf4;border:1px solid #86efac;border-radius:8px;color:#166534;margin-top:16px;font-weight:500;font-size:.95rem;">
@@ -1129,16 +1126,7 @@ function toggleFaq(btn) {
 
     // Anti-bot : honeypot _gotcha
     const gotcha = form.querySelector('input[name="_gotcha"]');
-    if (gotcha && gotcha.value) return;
-
-    // Anti-bot : Turnstile token
-    const tsResp = form.querySelector('[name="cf-turnstile-response"]');
-    if (!tsResp || !tsResp.value) {
-      const errorEl = document.getElementById('form-error');
-      if (errorEl) {
-        errorEl.textContent = '✗ Veuillez compléter la vérification anti-robot avant d\'envoyer.';
-        errorEl.style.display = 'block';
-      } else {
+    if (gotcha && gotcha.value) return; else {
         alert('Veuillez compléter la vérification anti-robot.');
       }
       return;
