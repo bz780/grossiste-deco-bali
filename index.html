@@ -260,8 +260,15 @@ header { background: var(--white); border-bottom: 1px solid var(--border); posit
 /* CATALOGUE */
 .catalogue-section { background: var(--white); }
 .catalogue-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 36px; }
-.filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--ink); padding: 7px 18px; border-radius: 20px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; }
-.filter-btn.active, .filter-btn:hover { background: var(--terra); border-color: var(--terra); color: var(--white); }
+.filter-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--ink); padding: 7px 18px; border-radius: 20px; font-size: .85rem; font-weight: 600; cursor: pointer; transition: all .15s; font-family: inherit; }
+.filter-btn.active, .filter-btn:hover:not([disabled]) { background: var(--terra); border-color: var(--terra); color: var(--white); }
+.filter-btn[disabled] { opacity: .35; cursor: not-allowed; background: var(--bg); border-color: var(--border); color: var(--ink); }
+.filter-meta { display: flex; gap: 16px; align-items: center; margin: -18px 0 24px; font-size: .82rem; color: var(--ink-light); }
+.filter-meta .reset-link { background: none; border: none; color: var(--terra); font-weight: 700; cursor: pointer; padding: 0; font-family: inherit; font-size: inherit; text-decoration: underline; }
+.filter-meta .reset-link[hidden] { display: none; }
+.filter-empty { text-align: center; padding: 30px 20px; color: var(--ink-light); font-size: .92rem; background: var(--white); border: 1px dashed var(--border); border-radius: 8px; display: none; margin-bottom: 24px; }
+.filter-empty.show { display: block; }
+.filter-empty button { background: var(--terra); color: #fff; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-left: 8px; font-family: inherit; }
 .produits-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 @media (max-width: 768px) { .produits-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .produits-grid { grid-template-columns: 1fr; } }
@@ -633,14 +640,22 @@ footer a:hover { color: rgba(255,255,255,.85); }
     <span class="tag">Catalogue grossiste</span>
     <h2 class="section-title">L'importateur Bali le plus fiable pour les pros</h2>
     <p class="section-desc">Tarifs indiqués pour 30–99 pièces. Remises supplémentaires sur commandes &gt; 100 pcs — voir tableau des remises ci-dessous.</p>
-    <div class="catalogue-filters">
-      <button class="filter-btn active" onclick="filterProduits('all', this)">Tout voir</button>
-      <button class="filter-btn" onclick="filterProduits('mobilier', this)">Mobilier</button>
-      <button class="filter-btn" onclick="filterProduits('statues', this)">Statues &amp; Art</button>
-      <button class="filter-btn" onclick="filterProduits('luminaires', this)">Luminaires</button>
-      <button class="filter-btn" onclick="filterProduits('textiles', this)">Textiles</button>
-      <button class="filter-btn" onclick="filterProduits('jardin', this)">Jardin</button>
-      <button class="filter-btn" onclick="filterProduits('bienetre', this)">Bien-être</button>
+    <div class="catalogue-filters" data-filter-bar>
+      <button class="filter-btn active" data-cat="all">Tout voir</button>
+      <button class="filter-btn" data-cat="mobilier">Mobilier</button>
+      <button class="filter-btn" data-cat="statues">Statues &amp; Art</button>
+      <button class="filter-btn" data-cat="luminaires">Luminaires</button>
+      <button class="filter-btn" data-cat="textiles">Textiles</button>
+      <button class="filter-btn" data-cat="jardin">Jardin</button>
+      <button class="filter-btn" data-cat="bienetre">Bien-être</button>
+    </div>
+    <div class="filter-meta">
+      <span class="filter-count" data-filter-count>12 / 12 références affichées</span>
+      <button type="button" class="reset-link" data-filter-reset hidden>Réinitialiser</button>
+    </div>
+    <div class="filter-empty" data-filter-empty>
+      Aucune référence ne correspond à ce filtre.
+      <button type="button" data-filter-reset-inline>Réinitialiser</button>
     </div>
     <div class="produits-grid">
       <!-- Mobilier -->
@@ -1166,13 +1181,37 @@ footer a:hover { color: rgba(255,255,255,.85); }
 </footer>
 
 <script>
-function filterProduits(cat, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.produit-card').forEach(card => {
-    card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
-  });
-}
+/* Filtres dynamiques avec compteurs + désactivation 0-result */
+(function () {
+  const bar = document.querySelector('[data-filter-bar]');
+  if (!bar) return;
+  const cards = Array.from(document.querySelectorAll('.produit-card'));
+  const countEl = document.querySelector('[data-filter-count]');
+  const resetEl = document.querySelector('[data-filter-reset]');
+  const emptyEl = document.querySelector('[data-filter-empty]');
+  const resetInline = document.querySelector('[data-filter-reset-inline]');
+  const total = cards.length;
+  function counts() { const c = { all: total }; cards.forEach(card => { const cat = card.dataset.cat; c[cat] = (c[cat] || 0) + 1; }); return c; }
+  function apply(activeCat) {
+    const cnt = counts(); let visible = 0;
+    cards.forEach(card => { const m = activeCat === 'all' || card.dataset.cat === activeCat; card.style.display = m ? '' : 'none'; if (m) visible++; });
+    bar.querySelectorAll('.filter-btn').forEach(btn => {
+      const cat = btn.dataset.cat; const n = cnt[cat] || 0;
+      btn.classList.toggle('active', cat === activeCat);
+      const baseLabel = btn.textContent.replace(/\s*\(\d+\)\s*$/, '').trim();
+      btn.dataset.baseLabel = btn.dataset.baseLabel || baseLabel;
+      btn.textContent = btn.dataset.baseLabel + (cat === 'all' ? '' : ' (' + n + ')');
+      if (cat !== 'all' && n === 0) btn.setAttribute('disabled', ''); else btn.removeAttribute('disabled');
+    });
+    countEl.textContent = visible + ' / ' + total + ' référence' + (total > 1 ? 's' : '') + ' affichée' + (visible > 1 ? 's' : '');
+    if (resetEl) resetEl.hidden = (activeCat === 'all');
+    if (emptyEl) emptyEl.classList.toggle('show', visible === 0);
+  }
+  bar.addEventListener('click', e => { const btn = e.target.closest('.filter-btn'); if (!btn || btn.hasAttribute('disabled')) return; apply(btn.dataset.cat); });
+  if (resetEl) resetEl.addEventListener('click', () => apply('all'));
+  if (resetInline) resetInline.addEventListener('click', () => apply('all'));
+  apply('all');
+})();
 function toggleFaq(btn) {
   const item = btn.closest('.faq-item');
   const wasOpen = item.classList.contains('open');
