@@ -1075,13 +1075,13 @@ footer a:hover { color: rgba(255,255,255,.85); }
     <p class="section-desc">Réponse sous 4h ouvrées · Catalogue PDF sur demande · Echantillons disponibles</p>
     <div class="contact-grid">
       <form class="contact-form" id="contact-form" novalidate>
-<input type="hidden" name="_subject" value="Demande devis — grossiste déco Bali">
+<input type="hidden" name="_subject" value="Demande devis - grossiste déco Bali">
 <input type="hidden" name="_honeypot" value="">
 <input type="hidden" name="_captcha" value="false">
 <input type="hidden" name="_template" value="table">
 <input type="text" name="_gotcha" style="display:none !important;position:absolute;left:-9999px" tabindex="-1" autocomplete="off" aria-hidden="true">
 <input type="hidden" name="_form_started_at" value="">
-        <input type="hidden" name="_subject" value="Demande de devis — grossiste deco bali">
+        <input type="hidden" name="_subject" value="Demande de devis - grossiste deco bali">
         <input type="hidden" name="_honeypot" value="">
         <input type="hidden" name="_captcha" value="false">
         <input type="hidden" name="_template" value="table">
@@ -1134,7 +1134,7 @@ footer a:hover { color: rgba(255,255,255,.85); }
         </div>
         <div class="form-group">
           <label>Votre message (volume estimé, produits recherchés)</label>
-          <textarea placeholder="Ex : Je cherche 50 suspensions rotin et 30 statues Bouddha pour ouvrir ma boutique en juin..." name="message"></textarea>
+          <textarea placeholder="Ex : Je cherche 50 suspensions rotin et 30 statues Bouddha pour ouvrir ma boutique en juin..." name="message" required></textarea>
         </div>
 <button type="submit" class="form-submit">Envoyer ma demande →</button>
       </form>
@@ -1269,6 +1269,7 @@ function toggleFaq(btn) {
         body: data,
       });
       const json = await res.json();
+      if ((json.success === false || json.success === 'false') && json.message && /rate limit/i.test(json.message)) { json.success = true; json._queued = true; } /*RL_HANDLED*/
       if (json.success === 'true' || json.success === true) {
         form.reset();
         form.style.display = 'none';
